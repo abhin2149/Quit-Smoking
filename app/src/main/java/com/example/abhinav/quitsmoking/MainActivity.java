@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,6 +38,11 @@ import com.example.abhinav.quitsmoking.model.LoginCredentialsRequest;
 import com.example.abhinav.quitsmoking.model.User;
 import com.example.abhinav.quitsmoking.remote.APIService;
 import com.example.abhinav.quitsmoking.remote.ApiUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,15 +66,20 @@ public class MainActivity extends AppCompatActivity {
 
     private APIService apiService;
     private User.UserResult user;
+    private SharedPreferences  preferences;
 
     private AutoCompleteTextView usernameAutoCompleteTextView;
     private AutoCompleteTextView firstNameAutoCompleteTextView;
     private AutoCompleteTextView lastNameAutoCompleteTextView;
-    private AutoCompleteTextView emailAutoCompleteTextView;
+    private AutoCompleteTextView emailNameAutoCompleteTextView;
+
+    private AutoCompleteTextView smokedDayAutoCompleteTextView;
+    private AutoCompleteTextView costAutoCompleteTextView;
+    private AutoCompleteTextView startedSmokingNameAutoCompleteTextView;
+
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
-    private EditText bioEditText;
-    private EditText referralCodeEditText;
+    private EditText  emailEditText;
     //    private static EditText dobEditText;
 //    private Button dobButton;
     private ImageView uploadedImageView;
@@ -92,14 +103,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         signUpFormOkay = false;
+        preferences=this.getSharedPreferences("com.example.abhinav.quitsmoking",MODE_PRIVATE);
         nextButton=(Button)findViewById(R.id.nextButton);
         usernameAutoCompleteTextView = findViewById(R.id.username_textView);
         firstNameAutoCompleteTextView = findViewById(R.id.first_name_textView);
         lastNameAutoCompleteTextView = findViewById(R.id.last_name_textView);
-        emailAutoCompleteTextView = findViewById(R.id.email_textView);
+        smokedDayAutoCompleteTextView = findViewById(R.id.smoked_day_textView);
+        emailNameAutoCompleteTextView=findViewById(R.id.email_textView);
+        costAutoCompleteTextView = findViewById(R.id.cost_textView);
+        startedSmokingNameAutoCompleteTextView = findViewById(R.id.started_smoking_textView);
         passwordEditText = findViewById(R.id.password_editText);
         confirmPasswordEditText = findViewById(R.id.confirm_password_editText);
-        bioEditText = findViewById(R.id.bio_editText);
 //        dobEditText = rootView.findViewById(R.id.date_of_birth_editText);
 //        dobButton = rootView.findViewById(R.id.date_of_birth_Button);
         uploadedImageView = findViewById(R.id.uploaded_imageView);
@@ -144,22 +158,19 @@ public class MainActivity extends AppCompatActivity {
         usernameAutoCompleteTextView.setError(null);
         firstNameAutoCompleteTextView.setError(null);
         lastNameAutoCompleteTextView.setError(null);
-        emailAutoCompleteTextView.setError(null);
         passwordEditText.setError(null);
         confirmPasswordEditText.setError(null);
-        bioEditText.setError(null);
+
         user.setUserType(1);
 //        dobEditText.setError(null);
 
         String username = usernameAutoCompleteTextView.getText().toString().trim();
         String firstName = firstNameAutoCompleteTextView.getText().toString().trim();
         String lastName = lastNameAutoCompleteTextView.getText().toString().trim();
-        String email = emailAutoCompleteTextView.getText().toString().trim();
+        String email=emailNameAutoCompleteTextView.getText().toString().trim();
         String password1 = passwordEditText.getText().toString().trim();
         String password2 = confirmPasswordEditText.getText().toString().trim();
-        String bio = bioEditText.getText().toString().trim();
-        String referralCode = referralCodeEditText.getText().toString().trim();
-//        String dob = dobEditText.getText().toString().trim();
+
 
         boolean cancel = false;
         View focusView = null;
@@ -173,17 +184,15 @@ public class MainActivity extends AppCompatActivity {
             focusView = usernameAutoCompleteTextView;
             cancel = true;
         }
-
-        if (TextUtils.isEmpty(email)) {
-            emailAutoCompleteTextView.setError(getString(R.string.error_field_required));
-            focusView = emailAutoCompleteTextView;
+        if (TextUtils.isEmpty(username)) {
+            usernameAutoCompleteTextView.setError(getString(R.string.error_field_required));
+            focusView = usernameAutoCompleteTextView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            emailAutoCompleteTextView.setError(getString(R.string.error_invalid_email));
-            focusView = emailAutoCompleteTextView;
+        } else if (!isUsernameValid(username)) {
+            usernameAutoCompleteTextView.setError(getString(R.string.error_invalid_username));
+            focusView = usernameAutoCompleteTextView;
             cancel = true;
         }
-
         if (TextUtils.isEmpty(password1)) {
             passwordEditText.setError(getString(R.string.error_field_required));
             focusView = passwordEditText;
@@ -194,30 +203,40 @@ public class MainActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        if (!isBioValid(bio)) {
-            bioEditText.setError(getString(R.string.error_invalid_bio));
-            focusView = bioEditText;
-            cancel = true;
-        }
+        if(TextUtils.isEmpty(email)){
+            emailNameAutoCompleteTextView.setError(getString(R.string.error_field_required));
+            focusView=confirmPasswordEditText;
+            cancel=true;
 
+        }
+        else if(!isEmailValid(email)){
+
+            emailNameAutoCompleteTextView.setError(getString(R.string.error_invalid_email));
+            focusView=confirmPasswordEditText;
+            cancel=true;
+        }
 
         if (cancel) {
             focusView.requestFocus();
             signUpFormOkay = false;
         } else {
             user.setUsername(username);
-            user.setEmail(email);
             user.setFirstName(firstName);
+            user.setEmail(email);
             user.setLastName(lastName);
             user.setPassword(password1);
-            user.setBio(bio);
+            preferences.edit().putString("smoked_day",smokedDayAutoCompleteTextView.getText().toString()).apply();
+            preferences.edit().putString("cost",costAutoCompleteTextView.getText().toString()).apply();
+            preferences.edit().putString("started",startedSmokingNameAutoCompleteTextView.getText().toString()).apply();
+
+
             signUpFormOkay = true;
             signUpUser();
         }
     }
 
     private void signUpUser() {
-        apiService.createUser(user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getPassword(), user.getUserType(), user.getBio(),user.getReferralCode())
+        apiService.createUser(user.getUsername(),user.getEmail(), user.getFirstName(), user.getLastName(), user.getPassword(), user.getUserType(), user.getBio(),user.getReferralCode())
                 .enqueue(new Callback<User.UserResult>() {
                     @Override
                     public void onResponse(@NonNull Call<User.UserResult> call, @NonNull Response<User.UserResult> response) {
@@ -262,11 +281,14 @@ public class MainActivity extends AppCompatActivity {
                     user.setCode(response.body().getCode());
                     user.setReferralCount(response.body().getReferralCount());
                     user.setReferralCode(response.body().getReferralCode());
-                    if (body != null) uploadUserProfilePicture();
-                    else{
-                        startActivity(new Intent(MainActivity.this,MainScreenActivity.class));
+                    if (body != null)
+                        uploadUserProfilePicture();
+                    else {
+                        startActivity(new Intent(MainActivity.this, MainScreenActivity.class));
                         finish();
                     }
+
+
                 } else {
                     Toast.makeText(getApplicationContext(), "Some error occurred. Try Again", Toast.LENGTH_SHORT).show();
                 }

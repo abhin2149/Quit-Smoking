@@ -1,6 +1,7 @@
 package com.example.abhinav.quitsmoking.remote;
 
 import com.example.abhinav.quitsmoking.model.LoginCredentialsRequest;
+import com.example.abhinav.quitsmoking.model.Quotes;
 import com.example.abhinav.quitsmoking.model.User;
 import com.example.abhinav.quitsmoking.model.UserIdAuthTokenRequest;
 import java.util.Map;
@@ -53,6 +54,9 @@ public interface APIService {
 
     @GET("/api/s9lqsQTEJRpaUleqox5s/users/{id}/")
     Call<User.UserResult> getUser(@Path("id") int id);
+
+    @GET("/api/s9lqsQTEJRpaUleqox5s/quotes/{id}/")
+    Call<Quotes.Result> getQuote(@Path("id") int id);
 
 
 }

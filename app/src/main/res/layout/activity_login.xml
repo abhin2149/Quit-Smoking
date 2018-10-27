@@ -92,21 +92,5 @@
         android:textColor="@android:color/black"
         android:textSize="20sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/termstextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/terms"
-            android:gravity="center"
-            android:layout_gravity="bottom"
-            android:textColor="@color/colorPrimary"
-            android:onClick="viewAgreement"
-            android:layout_margin="10dp"
-            />
-
-    </LinearLayout>
 </LinearLayout>

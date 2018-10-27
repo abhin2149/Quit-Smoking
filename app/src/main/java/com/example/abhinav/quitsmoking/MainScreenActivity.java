@@ -43,7 +43,6 @@ public class MainScreenActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new Tab1Fragment(), "GARDEN");
         adapter.addFragment(new Tab2Fragment(), "PROGRESS");
-        adapter.addFragment(new Tab3Fragment(), "REWARDS");
         viewPager.setAdapter(adapter);
     }
 

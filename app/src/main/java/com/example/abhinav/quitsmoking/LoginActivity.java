@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -33,6 +34,7 @@ import com.example.abhinav.quitsmoking.remote.APIService;
 import com.example.abhinav.quitsmoking.remote.ApiUtils;
 
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,14 +51,13 @@ public class LoginActivity extends AppCompatActivity {
     private User.UserResult user;
 
     private APIService apiService;
+    private SharedPreferences preferences;
 
     private AutoCompleteTextView usernameAutoCompleteTextView;
     private EditText passwordEditText;
     private ProgressBar progressBar;
     private ScrollView loginFormScrollView;
     private TextView registerTextView;
-    private CheckBox disclaimerCheck;
-    private TextView termstextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,18 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getSupportActionBar().setTitle("Login Here");
+        preferences=this.getSharedPreferences("com.example.abhinav.quitsmoking",MODE_PRIVATE);
+
+        if (preferences.getAll()==null){
+
+            preferences.edit().putInt("count",1).apply();
+           // preferences.edit().putString("started",new Date().);
+        }
+        else{
+
+            int count=preferences.getInt("count",1);
+            preferences.edit().putInt("count",count+1).apply();
+        }
 
         loginFormScrollView = (ScrollView) findViewById(R.id.login_form);
         progressBar = (ProgressBar) findViewById(R.id.login_progressBar);
@@ -79,20 +92,16 @@ public class LoginActivity extends AppCompatActivity {
 
         apiService = ApiUtils.getAPIService();
 
-        termstextView=(TextView)findViewById(R.id.termstextView);
 
         registerTextView = (TextView) findViewById(R.id.registerTextView);
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(disclaimerCheck.isChecked()) {
-                    //Intent intent = new Intent(LoginActivity.this, RegisterAsOptionActivity.class);
-                    //startActivityForResult(intent, REGISTRATION_REQUEST);
-                }
-                else{
 
-                    Toast.makeText(getApplicationContext(),"Please accept the Terms and Conditions to Register",Toast.LENGTH_SHORT).show();
-                }
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+
             }
         });
 
@@ -154,14 +163,10 @@ public class LoginActivity extends AppCompatActivity {
         } else {
 
 
-            if(disclaimerCheck.isChecked()) {
+
                 showProgress(true);
                 loginUser(username, password);
-            }
-            else{
 
-                Toast.makeText(getApplicationContext(),"Please accept the Terms and Conditions to Proceed",Toast.LENGTH_SHORT).show();
-            }
 
         }
     }
@@ -224,15 +229,13 @@ public class LoginActivity extends AppCompatActivity {
                     */
                     user.setUserUrl(response.body().getUserUrl());
                     user.setUserType(response.body().getUserType());
-                    user.setBio(response.body().getBio());
                     user.setDateOfBirth(response.body().getDateOfBirth());
                     user.setProfilePicture(response.body().getProfilePicture());
                     user.setApproved(response.body().isApproved());
                     user.setPaidSubscription(response.body().hasPaidSubscription());
                     user.setProfileTags(response.body().getProfileTags());
-                    user.setCode(response.body().getCode());
-                    user.setReferralCode(response.body().getReferralCode());
-                    user.setReferralCount(response.body().getReferralCount());
+                    startActivity(new Intent(LoginActivity.this,MainScreenActivity.class));
+                    finish();
 
 
                 } else {

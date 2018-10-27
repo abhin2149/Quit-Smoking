@@ -63,6 +63,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/last_name_textInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -71,10 +72,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_last_name"
-                    android:inputType="text"
+                    android:inputType="textEmailAddress"
+                    android:nextFocusDown="@id/password_editText"
+                    android:nextFocusForward="@id/password_editText"
                     android:maxLines="1"
-                    android:nextFocusDown="@id/email_textView"
-                    android:nextFocusForward="@id/email_textView"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
@@ -128,26 +129,58 @@
                     android:imeActionLabel="@string/action_sign_up"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
-                    android:nextFocusDown="@id/bio_editText"
-                    android:nextFocusForward="@id/bio_editText"
                     android:maxLines="1"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/smoked_day_textInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/bio_editText"
+                <AutoCompleteTextView
+                    android:id="@+id/smoked_day_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_bio"
-                    android:imeActionLabel="@string/action_sign_up"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="text|textMultiLine|textAutoCorrect"
-                    android:ems="10"
+                    android:hint="Cigarettes smoked in a day"
+                    android:inputType="textEmailAddress"
+                    android:nextFocusDown="@id/password_editText"
+                    android:nextFocusForward="@id/password_editText"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/started_smoking_textInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/started_smoking_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="When did you start smoking?"
+                    android:inputType="textEmailAddress"
+                    android:nextFocusDown="@id/password_editText"
+                    android:nextFocusForward="@id/password_editText"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/cost_textInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/cost_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Cost per Packet"
+                    android:inputType="textEmailAddress"
+                    android:nextFocusDown="@id/password_editText"
+                    android:nextFocusForward="@id/password_editText"
                     android:maxLines="1"
                     android:singleLine="true" />
 

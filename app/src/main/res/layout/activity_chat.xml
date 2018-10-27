@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ChatActivity">
+
+
+    <ListView
+        android:id="@+id/messageList"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:divider="@null"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll">
+
+    </ListView>
+
+    <android.support.v7.widget.RecyclerView
+        android:orientation="horizontal"
+        android:id="@+id/quickReplyList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+         />
+
+    <LinearLayout
+        android:id="@+id/horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/messageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginBottom="11dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="Type a message..."
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"
+            android:background="@drawable/ic_menu_send"
+            android:onClick="send"
+            android:layout_marginRight="15dp" />
+    </LinearLayout>
+
+</LinearLayout>
